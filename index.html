@@ -1,268 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pwriter | Advanced Deep AI Prompt Architect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root { --neon: #00f2ff; --neon-purple: #b026ff; --bg: #030305; }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; color: #e0e0e0; }
-        .neon-border { border: 1px solid rgba(0, 242, 255, 0.15); transition: all 0.3s ease; }
-        .neon-border:hover { border: 1px solid var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.15); }
-        .glass-morphism { background: rgba(15, 15, 20, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .layer-badge { font-size: 9px; padding: 5px 12px; border-radius: 6px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 242, 255, 0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 242, 255, 0.6); }
-
-        /* Typing cursor animation */
-        .typing-cursor::after { content: '|'; animation: blink 1s step-end infinite; color: var(--neon); }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    </style>
-</head>
-<body class="h-screen flex flex-col overflow-hidden selection:bg-cyan-500/30">
-
-    <nav class="h-16 border-b border-white/5 flex items-center justify-between px-8 glass-morphism z-50">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.3)]">
-                <i data-lucide="terminal-square" class="w-6 h-6 text-black"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-black tracking-tighter text-white leading-none">pwriter<span class="text-cyan-400">.</span></h1>
-                <p class="text-[10px] text-cyan-400/70 font-mono tracking-widest uppercase mt-0.5">7-Layer Deep Architecture</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-6 text-sm font-medium">
-            <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SYSTEM ONLINE
-            </div>
-        </div>
-    </nav>
-
-    <div class="flex-1 flex overflow-hidden relative">
-        <aside class="w-20 border-r border-white/5 flex flex-col items-center py-8 gap-8 glass-morphism z-40">
-            <button class="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500 hover:text-black transition"><i data-lucide="layers" class="w-5 h-5"></i></button>
-            <button class="p-3 rounded-xl text-slate-500 hover:text-white transition" title="History"><i data-lucide="history" class="w-5 h-5"></i></button>
-            <button class="p-3 rounded-xl text-slate-500 hover:text-white transition" title="Settings"><i data-lucide="settings" class="w-5 h-5"></i></button>
-        </aside>
-
-        <main class="flex-1 p-6 lg:p-8 grid grid-cols-12 gap-6 overflow-y-auto">
-            
-            <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
-                <div class="p-6 rounded-3xl glass-morphism neon-border flex-1 flex flex-col gap-5">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="cpu" class="text-cyan-400 w-5 h-5"></i> Objective Core
-                        </h2>
-                        <button onclick="clearInput()" class="text-xs text-slate-500 hover:text-red-400 transition flex items-center gap-1">
-                            <i data-lucide="trash-2" class="w-3 h-3"></i> Clear
-                        </button>
-                    </div>
-                    
-                    <div class="flex-1 flex flex-col">
-                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Define The Objective</label>
-                        <textarea id="raw-input" class="flex-1 w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-cyan-50 font-mono text-sm focus:border-cyan-500 outline-none transition resize-none custom-scrollbar" placeholder="What exactly do you want the AI to generate? Provide details, data, and context..."></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="p-3 rounded-xl bg-black/40 border border-white/5">
-                            <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Target Engine</label>
-                            <select id="target" class="bg-transparent text-sm font-semibold w-full outline-none text-white cursor-pointer appearance-none">
-                                <option value="ChatGPT (GPT-4o)" class="bg-gray-900">ChatGPT (GPT-4o)</option>
-                                <option value="Claude 3.5 Sonnet" class="bg-gray-900">Claude 3.5</option>
-                                <option value="Gemini 1.5 Pro" class="bg-gray-900">Gemini 1.5 Pro</option>
-                            </select>
-                        </div>
-                        <div class="p-3 rounded-xl bg-black/40 border border-white/5">
-                            <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Tone & Voice</label>
-                            <select id="tone" class="bg-transparent text-sm font-semibold w-full outline-none text-white cursor-pointer appearance-none">
-                                <option value="Highly Professional & Authoritative" class="bg-gray-900">Professional</option>
-                                <option value="Academic & Research-focused" class="bg-gray-900">Academic</option>
-                                <option value="Direct, Concise & Technical" class="bg-gray-900">Technical</option>
-                                <option value="Creative & Engaging" class="bg-gray-900">Creative</option>
-                            </select>
-                        </div>
-                        <div class="p-3 rounded-xl bg-black/40 border border-white/5 col-span-2">
-                            <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Output Structure Constraint</label>
-                            <select id="format" class="bg-transparent text-sm font-semibold w-full outline-none text-white cursor-pointer appearance-none">
-                                <option value="Structured Markdown with Clear Headers and Bullet Points" class="bg-gray-900">Structured Markdown</option>
-                                <option value="Clean Code Blocks with Inline Comments" class="bg-gray-900">Code & Documentation</option>
-                                <option value="Valid JSON Object (Strictly NO extra text)" class="bg-gray-900">Strict JSON</option>
-                                <option value="Comprehensive Essay / Detailed Report" class="bg-gray-900">Detailed Report</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button onclick="generateDeepPrompt()" class="w-full py-4 mt-2 bg-gradient-to-r from-cyan-600 to-cyan-400 text-black font-black text-sm uppercase tracking-wider rounded-xl hover:shadow-[0_0_25px_rgba(0,242,255,0.4)] transition-all duration-300 flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
-                        Build 7-Layer Prompt <i data-lucide="zap" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="col-span-12 lg:col-span-7 flex flex-col">
-                <div id="output-container" class="flex-1 p-6 rounded-3xl glass-morphism neon-border relative flex flex-col h-[600px] lg:h-auto">
-                    
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-white/5">
-                        <div class="flex flex-wrap gap-1.5">
-                            <span class="layer-badge bg-blue-500/10 text-blue-400 border border-blue-500/20">ROLE</span>
-                            <span class="layer-badge bg-purple-500/10 text-purple-400 border border-purple-500/20">CONTEXT</span>
-                            <span class="layer-badge bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">OBJECTIVE</span>
-                            <span class="layer-badge bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">THINKING</span>
-                            <span class="layer-badge bg-orange-500/10 text-orange-400 border border-orange-500/20">FORMAT</span>
-                            <span class="layer-badge bg-red-500/10 text-red-400 border border-red-500/20">CONSTRAINTS</span>
-                            <span class="layer-badge bg-green-500/10 text-green-400 border border-green-500/20">QUALITY</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="copyToClipboard()" class="flex items-center gap-1.5 text-[11px] font-bold bg-white/5 hover:bg-cyan-500 hover:text-black text-white px-4 py-2 rounded-lg transition border border-white/10">
-                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> COPY
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 relative">
-                        <pre id="prompt-display" class="font-mono text-[13.5px] leading-relaxed text-slate-500 whitespace-pre-wrap">Awaiting parameters to construct 7-Layer Architecture...</pre>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] text-slate-500 font-mono">
-                        <span id="status-text">Status: Idle</span>
-                        <span id="word-count">Est. Length: 0 Words</span>
-                    </div>
-
-                    <div id="loader" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-10 backdrop-blur-md rounded-3xl">
-                        <div class="relative w-16 h-16 mb-6">
-                            <div class="absolute inset-0 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
-                            <div class="absolute inset-2 border-4 border-purple-500/20 border-b-purple-500 rounded-full animate-spin-slow"></div>
-                            <i data-lucide="cpu" class="absolute inset-0 m-auto w-6 h-6 text-cyan-400 animate-pulse"></i>
-                        </div>
-                        <p class="text-[11px] font-black tracking-[0.2em] text-cyan-400">SYNTHESIZING 7-LAYER LOGIC...</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        // Initialize Icons
-        lucide.createIcons();
-
-        let typingInterval; 
-
-        function clearInput() {
-            document.getElementById('raw-input').value = '';
-            document.getElementById('raw-input').focus();
-        }
-
-        function generateDeepPrompt() {
-            const input = document.getElementById('raw-input').value.trim();
-            const target = document.getElementById('target').value;
-            const tone = document.getElementById('tone').value;
-            const format = document.getElementById('format').value;
-            const display = document.getElementById('prompt-display');
-            const loader = document.getElementById('loader');
-            const statusText = document.getElementById('status-text');
-
-            if(!input) {
-                alert("Error: Please define the Objective first.");
-                return;
-            }
-
-            // Reset UI
-            clearInterval(typingInterval);
-            display.classList.remove('typing-cursor');
-            loader.classList.remove('hidden');
-            statusText.innerText = "Status: Processing...";
-
-            setTimeout(() => {
-                loader.classList.add('hidden');
-                
-                // Constructing the EXACT 7-Layer Prompt requested by user
-                const elitePrompt = `### [ROLE]
-Act as an elite, world-class expert and Senior Architect with decades of foundational knowledge and practical experience in the relevant domain. Your persona is highly analytical, authoritative, and deeply detail-oriented.
-
-### [CONTEXT]
-- Target AI Platform: Optimize your logic, reasoning, and token usage specifically for ${target}.
-- Communication Tone: strictly ${tone}.
-- Background: The user requires an uncompromising, flawless execution of a complex task. Read the objective with absolute focus.
-
-### [OBJECTIVE]
-Carefully analyze and execute the following core objective:
-"""
-${input}
-"""
-
-### [STEP-BY-STEP THINKING]
-Before generating the final output, you MUST process this using Chain-of-Thought reasoning:
-1. Deconstruct the user's objective into its core requirements.
-2. Identify any potential edge cases, logical gaps, or missing variables.
-3. Formulate a strategic plan to address the objective comprehensively.
-4. Execute the plan logically and systematically.
-
-### [OUTPUT FORMAT]
-Present your final answer STRICTLY adhering to this format: [${format}].
-Ensure the architecture of your response is clean, scannable, and highly professional.
-
-### [CONSTRAINTS]
-Follow these cardinal rules without exception:
-- ZERO filler content. Do not include phrases like "Here is the response" or "I hope this helps".
-- Prioritize high-density, actionable information over theoretical fluff.
-- Do not hallucinate; if data is missing, state your assumptions clearly or ask for clarification.
-- Remain strictly aligned with the context provided.
-
-### [QUALITY CHECK]
-Run a rigorous self-audit before finalizing your output:
-- Is the logic flawlessly accurate?
-- Have you strictly followed the requested tone and format?
-- Did you address every nuance of the [OBJECTIVE]?
-If the answer to any of these is no, revise internally before outputting the final result.`;
-
-                // Calculate stats
-                const wordCount = elitePrompt.split(/\s+/).length;
-                document.getElementById('word-count').innerText = `Est. Length: ${wordCount} Words`;
-                statusText.innerText = "Status: Synthesis Complete";
-
-                // Trigger Typing Effect
-                display.innerText = "";
-                display.classList.remove('text-slate-500');
-                display.classList.add('text-cyan-50', 'typing-cursor');
-                
-                // Typing effect speed (index + 6 for faster generation)
-                typeWriterEffect(display, elitePrompt, 0);
-
-            }, 1000); 
-        }
-
-        // Fast Typing Effect
-        function typeWriterEffect(element, text, index) {
-            if (index < text.length) {
-                let chunk = text.substring(index, index + 6); 
-                element.innerHTML += chunk;
-                typingInterval = setTimeout(() => typeWriterEffect(element, text, index + 6), 5);
-            } else {
-                element.classList.remove('typing-cursor');
-            }
-        }
-
-        function copyToClipboard() {
-            const text = document.getElementById('prompt-display').innerText;
-            if(text.includes('Awaiting parameters')) return;
-            
-            navigator.clipboard.writeText(text);
-            
-            // Visual feedback
-            const originalText = document.getElementById('status-text').innerText;
-            document.getElementById('status-text').innerText = "Status: Copied to Clipboard!";
-            document.getElementById('status-text').classList.add('text-green-400');
-            
-            setTimeout(() => {
-                document.getElementById('status-text').innerText = originalText;
-                document.getElementById('status-text').classList.remove('text-green-400');
-            }, 3000);
-        }
-    </script>
+<!DOCTYPE html> 
+<html lang="en" class="dark"> 
+<head> <meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>PWriter | AI Prompt Writing Studio</title> 
+<script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script> <script src="[https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest)"></script> <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap)" rel="stylesheet"> 
+<script> tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'], }, colors: { background: 'var(--background)', surface: 'var(--surface)', border: 'var(--border)', text: 'var(--text)', muted: 'var(--muted)', primary: '#0ea5e9', secondary: '#a855f7', success: '#10b981', warning: '#f59e0b', danger: '#ef4444' }, animation: { 'gradient-x': 'gradient-x 15s ease infinite', 'float': 'float 6s ease-in-out infinite', 'fade-in': 'fadeIn 0.5s ease-out forwards', 'slide-up': 'slideUp 0.4s ease-out forwards', }, keyframes: { 'gradient-x': { '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' }, '50%': { 'background-size': '200% 200%', 'background-position': 'right center' } }, float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' }, }, fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' }, }, slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' }, } } } } } </script> <style> :root { --background: #f8fafc; --surface: rgba(255, 255, 255, 0.7); --border: rgba(0, 0, 0, 0.1); --text: #0f172a; --muted: #64748b; } .dark { --background: #050505; --surface: rgba(20, 20, 25, 0.6); --border: rgba(255, 255, 255, 0.1); --text: #f8fafc; --muted: #94a3b8; }
+body { background-color: var(--background); color: var(--text); transition: background-color 0.3s ease, color 0.3s ease; }
+.glass { background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+.dark .glass { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
+.glass-hover:hover { border-color: rgba(14, 165, 233, 0.5); box-shadow: 0 0 20px rgba(14, 165, 233, 0.15); transform: translateY(-2px); }
+.input-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: var(--text); transition: all 0.2s ease; }
+.dark .input-glass { background: rgba(0, 0, 0, 0.2); }
+.input-glass:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2); background: rgba(255, 255, 255, 0.1); }
+.dark .input-glass:focus { background: rgba(0, 0, 0, 0.4); }
+/* Custom Scrollbar */ ::-webkit-scrollbar { width: 8px; height: 8px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+/* Animated Background */ .bg-shapes { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; pointer-events: none; }
+.shape { position: absolute; filter: blur(80px); opacity: 0.4; border-radius: 50%; animation: float 20s infinite alternate; }
+.dark .shape { opacity: 0.15; }
+.shape-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #a855f7 0%, transparent 70%); animation-delay: 0s; }
+.shape-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #0ea5e9 0%, transparent 70%); animation-delay: -5s; }
+/* Syntax Highlighting Mock */ .hl-keyword { color: #c678dd; } .hl-string { color: #98c379; } .hl-comment { color: #5c6370; font-style: italic; }
+#toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 50; display: flex; flex-direction: column; gap: 10px; } </style> </head> <body class="min-h-screen antialiased selection:bg-primary/30 selection:text-primary"> <!-- Animated Background --> <div class="bg-shapes"> <div class="shape shape-1"></div> <div class="shape shape-2"></div> </div>
+<!-- Navigation --> <nav class="fixed top-0 w-full z-40 glass border-b-0 border-t-0 border-x-0"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex items-center justify-between h-16"> <div class="flex items-center gap-3"> <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20"> <i data-lucide="pen-tool" class="text-white w-5 h-5"></i> </div> <span class="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">PWriter</span> </div> <div class="flex items-center gap-4"> <button id="clear-all-btn" class="text-sm font-medium text-muted hover:text-text transition-colors flex items-center gap-2"> <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="hidden sm:inline">Reset</span> </button> <div class="w-px h-6 bg-border"></div> <button id="theme-toggle" class="p-2 rounded-full hover:bg-border/50 transition-colors text-muted hover:text-text"> <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i> <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i> </button> </div> </div> </div> </nav>
+<!-- Main Content --> <main class="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen flex flex-col">
+<!-- Hero Section --> <div class="text-center mb-12 animate-slide-up"> <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-primary/30 text-primary text-xs font-medium mb-6 uppercase tracking-wider"> <span class="relative flex h-2 w-2"> <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span> <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span> </span> 6-Element Skeleton Framework </div> <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4"> Engineer World-Class <br class="hidden md:block" /> <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary animate-gradient-x">AI Prompts</span> </h1> <p class="text-lg text-muted max-w-2xl mx-auto mb-8"> The ultra-modern AI Prompt Writing Studio. Build highly effective, structured, and precise prompts using our industry-leading methodology. </p> </div>
+<!-- App Grid --> <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Left Column: Builder (6 Elements) --> <div class="lg:col-span-7 space-y-6">
+<!-- Templates Quick Select --> <div class="glass rounded-2xl p-5 animate-slide-up" style="animation-delay: 0.1s;"> <div class="flex items-center justify-between mb-4"> <h2 class="text-sm font-semibold uppercase tracking-wider text-muted flex items-center gap-2"> <i data-lucide="layout-template" class="w-4 h-4"></i> Template Library </h2> <div class="relative w-48"> <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted"></i> <input type="text" id="template-search" placeholder="Search..." class="w-full pl-9 pr-3 py-1.5 rounded-lg input-glass text-sm"> </div> </div> <div class="flex gap-3 overflow-x-auto pb-2 custom-scrollbar" id="template-container"> <!-- Templates rendered via JS --> </div> </div>
+<!-- 6 Element Framework --> <div class="space-y-4" id="builder-container"> <!-- Cards generated via JS to keep HTML clean and DRY --> </div>
+</div>
+<!-- Right Column: Preview & Analysis --> <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+<!-- Quality Analyzer --> <div class="glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.2s;"> <h2 class="text-sm font-semibold uppercase tracking-wider text-muted flex items-center gap-2 mb-6"> <i data-lucide="activity" class="w-4 h-4"></i> Prompt Quality Analyzer </h2>
+<div class="flex items-end gap-4 mb-6"> <div class="text-5xl font-bold tracking-tighter" id="score-display">0</div> <div class="text-muted pb-1 font-medium">/ 100 Score</div> </div>
+<div class="space-y-4"> <!-- Score Bars --> <div> <div class="flex justify-between text-xs mb-1"> <span>Completeness</span> <span id="score-completeness-val">0%</span> </div> <div class="h-2 w-full bg-border rounded-full overflow-hidden"> <div id="score-completeness-bar" class="h-full bg-primary transition-all duration-500 w-0"></div> </div> </div> <div> <div class="flex justify-between text-xs mb-1"> <span>Specificity & Detail</span> <span id="score-detail-val">0%</span> </div> <div class="h-2 w-full bg-border rounded-full overflow-hidden"> <div id="score-detail-bar" class="h-full bg-secondary transition-all duration-500 w-0"></div> </div> </div> </div>
+<div class="mt-6 p-4 rounded-xl bg-primary/10 border border-primary/20 text-sm"> <div class="flex items-start gap-3"> <i data-lucide="lightbulb" class="w-5 h-5 text-primary shrink-0 mt-0.5"></i> <div> <span class="font-semibold text-primary block mb-1">AI Suggestion</span> <p id="ai-suggestion" class="text-muted text-xs leading-relaxed">Start filling out the framework to get real-time feedback on your prompt quality.</p> </div> </div> </div> </div>
+<!-- Live Preview --> <div class="glass rounded-2xl p-0 overflow-hidden flex flex-col h-[500px] animate-slide-up" style="animation-delay: 0.3s;"> <div class="p-4 border-b border-border flex items-center justify-between bg-surface/50"> <h2 class="text-sm font-semibold uppercase tracking-wider text-muted flex items-center gap-2"> <i data-lucide="terminal" class="w-4 h-4"></i> Live Output </h2> <div class="flex gap-2"> <span class="text-xs text-muted flex items-center gap-1 bg-border/50 px-2 py-1 rounded-md"> <i data-lucide="type" class="w-3 h-3"></i> <span id="word-count">0</span> words </span> </div> </div>
+<div class="flex-grow p-4 overflow-y-auto relative bg-[#0a0a0a] text-gray-300 font-mono text-sm leading-relaxed custom-scrollbar" id="preview-container"> <div id="preview-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-600"> <i data-lucide="code-2" class="w-12 h-12 mb-3 opacity-20"></i> <p>Output will appear here...</p> </div> <pre id="preview-text" class="whitespace-pre-wrap hidden font-mono text-sm"></pre> </div>
+<div class="p-4 border-t border-border bg-surface/50 grid grid-cols-2 gap-3"> <button id="btn-copy" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium transition-colors"> <i data-lucide="copy" class="w-4 h-4"></i> Copy Prompt </button> <button id="btn-download" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border hover:bg-border/50 text-text font-medium transition-colors"> <i data-lucide="download" class="w-4 h-4"></i> Export .txt </button> </div> </div>
+</div> </div> </main>
+<div id="toast-container"></div>
+<script> // ========================================== // DATA STRUCTURES & CONSTANTS // ========================================== const FRAMEWORK_ELEMENTS = [ { id: 'role', title: 'Role / Persona', icon: 'user', tooltip: 'Who is the AI acting as? Provide a specific persona, profession, or mindset.', placeholder: 'e.g., You are a Senior React Developer with 10 years of experience in performance optimization.' }, { id: 'goal', title: 'Goal / Task', icon: 'target', tooltip: 'What exactly do you want the AI to do? Be clear and action-oriented.', placeholder: 'e.g., Write a comprehensive guide on implementing React Server Components.' }, { id: 'context', title: 'Context / References', icon: 'file-text', tooltip: 'What background information does the AI need? Provide links, facts, or audience details.', placeholder: 'e.g., The target audience is intermediate frontend developers. Focus on Next.js 14.' }, { id: 'examples', title: 'Examples / Demonstrations', icon: 'copy-plus', tooltip: 'Show, don't just tell. Provide inputs and desired outputs.', placeholder: 'e.g., Input: [Standard Component] -> Output: [RSC Optimized Component]' }, { id: 'format', title: 'Output Format Requirements', icon: 'layout-list', tooltip: 'How should the output look? Markdown, JSON, table, specific tone?', placeholder: 'e.g., Output as a valid Markdown file with code blocks. Use a professional but engaging tone.' }, { id: 'constraints', title: 'Constraints / Additional Instructions', icon: 'shield-alert', tooltip: 'What should the AI NOT do? Any strict rules or limitations?', placeholder: 'e.g., Do not use class components. Avoid explaining basic React concepts like useState.' } ];
+const TEMPLATES = [ { name: "Coding", icon: "code", data: { role: "You are an Elite Software Engineer and System Architect.", goal: "Write an efficient, secure, and well-documented script.", context: "The stack is Python 3.10 and PostgreSQL. This is for a high-traffic microservice.", examples: "Input user data -> Output valid JSON response with HTTP 200.", format: "Provide only the code block in Markdown. Include inline comments.", constraints: "Do not use deprecated libraries. Ensure O(1) or O(n) time complexity where possible." } }, { name: "Blog Writing", icon: "pen", data: { role: "You are an expert SEO Content Writer and Industry Authority.", goal: "Write an engaging, long-form blog post.", context: "The topic is 'The Future of AI in UX Design'. Target audience is designers and tech enthusiasts.", examples: "Title Idea: 5 Ways AI is Revolutionizing UI/UX. Tone: Insightful, optimistic.", format: "Markdown format. Use H2 and H3 tags. Include an introduction and conclusion.", constraints: "Keep paragraphs under 4 sentences. Avoid robotic phrasing." } }, { name: "Marketing", icon: "trending-up", data: { role: "You are a Master Copywriter and Growth Hacker.", goal: "Create a high-converting email campaign.", context: "We are launching a new SaaS product called PWriter, an AI prompt builder.", examples: "Subject line: Stop writing bad prompts. Hook: 90% of AI outputs are generic because the inputs are generic.", format: "3 distinct email variants (Short, Story-based, Direct).", constraints: "No spam trigger words. Keep reading level at 8th grade." } }, { name: "UI/UX Eval", icon: "layout", data: { role: "You are a Principal UX Researcher.", goal: "Audit the provided UI concept and suggest UX improvements.", context: "It's a dashboard for financial analytics. Users are CFOs.", examples: "", format: "Bullet point list categorized by: Usability, Accessibility, Aesthetics.", constraints: "Base feedback on Nielsen's Heuristics." } }, { name: "Business", icon: "briefcase", data: { role: "You are a Fortune 500 Strategy Consultant.", goal: "Develop a go-to-market strategy outline.", context: "B2B SaaS startup entering the cybersecurity training space.", examples: "", format: "Executive summary, followed by a structured table of phases (Q1-Q4).", constraints: "Be hyper-specific. Avoid generic advice like 'leverage social media'." } } ];
+let state = { role: '', goal: '', context: '', examples: '', format: '', constraints: '' };
+// ========================================== // INITIALIZATION // ========================================== document.addEventListener('DOMContentLoaded', () => { initTheme(); renderBuilder(); renderTemplates(TEMPLATES); loadState(); setupEventListeners(); lucide.createIcons(); updatePreview(); });
+// ========================================== // RENDER FUNCTIONS // ========================================== function renderBuilder() { const container = document.getElementById('builder-container'); container.innerHTML = FRAMEWORK_ELEMENTS.map((el, index) => <div class="glass rounded-2xl p-1 transition-all duration-300 focus-within:ring-1 focus-within:ring-primary focus-within:shadow-[0_0_20px_rgba(14,165,233,0.15)] group relative"> <div class="absolute -left-3 top-6 bg-surface text-muted text-xs font-mono w-6 h-6 rounded-full flex items-center justify-center border border-border shadow-sm z-10 group-focus-within:bg-primary group-focus-within:text-white group-focus-within:border-primary transition-colors"> ${index + 1} </div> <div class="p-4 flex flex-col gap-2"> <div class="flex items-center justify-between"> <label for="input-${el.id}" class="text-sm font-semibold flex items-center gap-2 cursor-pointer text-text group-focus-within:text-primary transition-colors"> <i data-lucide="${el.icon}" class="w-4 h-4"></i> ${el.title} </label> <div class="group/tooltip relative"> <i data-lucide="info" class="w-4 h-4 text-muted hover:text-primary cursor-help"></i> <div class="absolute bottom-full right-0 mb-2 w-64 p-2 bg-text text-background text-xs rounded-lg opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-20 shadow-xl"> ${el.tooltip} <svg class="absolute text-text h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg> </div> </div> </div> <textarea id="input-${el.id}" data-key="${el.id}" class="w-full bg-transparent border-0 resize-none focus:ring-0 text-sm leading-relaxed min-h-[80px] p-2 rounded-lg input-glass custom-scrollbar" placeholder="${el.placeholder}" ></textarea> </div> </div>).join(''); }
+function renderTemplates(templatesToRender) { const container = document.getElementById('template-container'); container.innerHTML = templatesToRender.map((t, i) => <button onclick="applyTemplate(${i})" class="flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-xl glass glass-hover transition-all text-sm font-medium whitespace-nowrap"> <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"> <i data-lucide="${t.icon}" class="w-4 h-4"></i> </div> ${t.name} </button>).join(''); lucide.createIcons(); }
+// ========================================== // LOGIC & STATE MANAGEMENT // ========================================== function setupEventListeners() { // Textarea listeners FRAMEWORK_ELEMENTS.forEach(el => { const textarea = document.getElementById(input-${el.id}); textarea.addEventListener('input', (e) => { state[el.id] = e.target.value; autoResize(e.target); saveState(); updatePreview(); }); });
+// Theme Toggle document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+// Action Buttons document.getElementById('btn-copy').addEventListener('click', copyPrompt); document.getElementById('btn-download').addEventListener('click', downloadPrompt); document.getElementById('clear-all-btn').addEventListener('click', clearAll);
+// Search Templates document.getElementById('template-search').addEventListener('input', (e) => { const term = e.target.value.toLowerCase(); const filtered = TEMPLATES.filter(t => t.name.toLowerCase().includes(term)); renderTemplates(filtered); }); }
+function autoResize(textarea) { textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px'; }
+function updatePreview() { const previewText = document.getElementById('preview-text'); const placeholder = document.getElementById('preview-placeholder');
+let promptParts = [];
+if (state.role) promptParts.push(### ROLE\n${state.role}\n); if (state.goal) promptParts.push(### GOAL\n${state.goal}\n); if (state.context) promptParts.push(### CONTEXT\n${state.context}\n); if (state.examples) promptParts.push(### EXAMPLES\n${state.examples}\n); if (state.format) promptParts.push(### FORMAT\n${state.format}\n); if (state.constraints) promptParts.push(### CONSTRAINTS\n${state.constraints}\n);
+const fullPrompt = promptParts.join('\n');
+if (fullPrompt.trim() === '') { previewText.classList.add('hidden'); placeholder.classList.remove('hidden'); document.getElementById('word-count').innerText = '0'; } else { previewText.classList.remove('hidden'); placeholder.classList.add('hidden');
+// Syntax highlighting mock const highlighted = fullPrompt .replace(/(### [A-Z]+)/g, '<span class="text-primary font-bold">$1</span>') .replace(/(e.g.,?)/gi, '<span class="text-muted italic">$1</span>');
+previewText.innerHTML = highlighted;
+// Word count const words = fullPrompt.trim().split(/\s+/).filter(w => w.length > 0).length; document.getElementById('word-count').innerText = words; }
+analyzePrompt(); }
+function analyzePrompt() { let fieldsFilled = 0; let totalLength = 0; let detailScore = 0;
+Object.values(state).forEach(val => { if (val.trim().length > 0) { fieldsFilled++; totalLength += val.length; if (val.length > 50) detailScore += 2; else if (val.length > 20) detailScore += 1; } });
+// Completeness logic const completenessPct = Math.round((fieldsFilled / 6) * 100); document.getElementById('score-completeness-bar').style.width = ${completenessPct}%; document.getElementById('score-completeness-val').innerText = ${completenessPct}%;
+// Detail Logic const detailPct = Math.min(Math.round((detailScore / 12) * 100), 100); document.getElementById('score-detail-bar').style.width = ${detailPct}%; document.getElementById('score-detail-val').innerText = ${detailPct}%;
+// Overall Score const overallScore = Math.round((completenessPct * 0.6) + (detailPct * 0.4)); const scoreDisplay = document.getElementById('score-display');
+// Animate number let start = parseInt(scoreDisplay.innerText) || 0; animateValue(scoreDisplay, start, overallScore, 500);
+// Colorize score scoreDisplay.className = 'text-5xl font-bold tracking-tighter transition-colors duration-300'; if (overallScore < 40) scoreDisplay.classList.add('text-danger'); else if (overallScore < 75) scoreDisplay.classList.add('text-warning'); else scoreDisplay.classList.add('text-success');
+// Update AI Suggestion const suggestionEl = document.getElementById('ai-suggestion'); if (overallScore === 0) { suggestionEl.innerText = "Start by defining the Role and Goal. These are the foundation of any good prompt."; } else if (!state.role) { suggestionEl.innerText = "Add a Role! Assigning a persona (e.g., 'Expert Analyst') drastically improves AI output quality."; } else if (!state.context) { suggestionEl.innerText = "You're missing Context. Give the AI background information to reduce hallucinations."; } else if (!state.examples && overallScore > 50) { suggestionEl.innerText = "Consider adding Examples. Few-shot prompting (giving examples) is the best way to enforce format."; } else if (!state.constraints) { suggestionEl.innerText = "Add Constraints to prevent the AI from generating unwanted content or adopting the wrong tone."; } else if (overallScore > 85) { suggestionEl.innerText = "Excellent prompt! It is highly structured, contextual, and ready for deployment."; } }
+function applyTemplate(index) { const data = TEMPLATES[index].data; Object.keys(data).forEach(key => { state[key] = data[key]; const textarea = document.getElementById(input-${key}); if(textarea) { textarea.value = data[key]; autoResize(textarea); } }); saveState(); updatePreview(); showToast(Applied ${TEMPLATES[index].name} template, 'success'); }
+function clearAll() { if(confirm('Are you sure you want to clear all fields?')) { state = { role: '', goal: '', context: '', examples: '', format: '', constraints: '' }; FRAMEWORK_ELEMENTS.forEach(el => { const textarea = document.getElementById(input-${el.id}); textarea.value = ''; textarea.style.height = 'auto'; }); saveState(); updatePreview(); showToast('Cleared all fields', 'info'); } }
+// ========================================== // UTILITIES // ========================================== function copyPrompt() { const text = getRawPromptText(); if (!text) { showToast('Nothing to copy', 'warning'); return; } navigator.clipboard.writeText(text).then(() => { showToast('Prompt copied to clipboard!', 'success'); const btn = document.getElementById('btn-copy'); const originalHtml = btn.innerHTML; btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Copied'; btn.classList.add('bg-success'); lucide.createIcons(); setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('bg-success'); lucide.createIcons(); }, 2000); }); }
+function downloadPrompt() { const text = getRawPromptText(); if (!text) { showToast('Nothing to export', 'warning'); return; } const blob = new Blob([text], { type: 'text/plain' }); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = PWriter_Prompt_${new Date().getTime()}.txt; a.click(); window.URL.revokeObjectURL(url); showToast('Prompt exported successfully', 'success'); }
+function getRawPromptText() { let promptParts = []; if (state.role) promptParts.push(### ROLE\n${state.role}\n); if (state.goal) promptParts.push(### GOAL\n${state.goal}\n); if (state.context) promptParts.push(### CONTEXT\n${state.context}\n); if (state.examples) promptParts.push(### EXAMPLES\n${state.examples}\n); if (state.format) promptParts.push(### FORMAT\n${state.format}\n); if (state.constraints) promptParts.push(### CONSTRAINTS\n${state.constraints}\n); return promptParts.join('\n'); }
+function showToast(message, type = 'info') { const container = document.getElementById('toast-container'); const toast = document.createElement('div');
+const icons = { success: '<i data-lucide="check-circle" class="w-4 h-4 text-success"></i>', warning: '<i data-lucide="alert-triangle" class="w-4 h-4 text-warning"></i>', info: '<i data-lucide="info" class="w-4 h-4 text-primary"></i>' };
+toast.className = glass px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-slide-up transform transition-all duration-300 translate-y-10 opacity-0; toast.innerHTML = ${icons[type] || icons.info} <span class="text-sm font-medium text-text">${message}</span>;
+container.appendChild(toast); lucide.createIcons();
+// Trigger animation in requestAnimationFrame(() => { toast.classList.remove('translate-y-10', 'opacity-0'); });
+// Remove after 3s setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => toast.remove(), 300); }, 3000); }
+function animateValue(obj, start, end, duration) { let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); obj.innerHTML = Math.floor(progress * (end - start) + start); if (progress < 1) { window.requestAnimationFrame(step); } }; window.requestAnimationFrame(step); }
+// ========================================== // LOCAL STORAGE & THEME // ========================================== function saveState() { localStorage.setItem('pwriter_state', JSON.stringify(state)); }
+function loadState() { const saved = localStorage.getItem('pwriter_state'); if (saved) { state = { ...state, ...JSON.parse(saved) }; FRAMEWORK_ELEMENTS.forEach(el => { const textarea = document.getElementById(input-${el.id}); if(textarea && state[el.id]) { textarea.value = state[el.id]; setTimeout(() => autoResize(textarea), 10); } }); } }
+function initTheme() { if (localStorage.theme === 'light') { document.documentElement.classList.remove('dark'); } else { document.documentElement.classList.add('dark'); } }
+function toggleTheme() { document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'; }
+</script> 
 </body>
-</html>
+ </html>
